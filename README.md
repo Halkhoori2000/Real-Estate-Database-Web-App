@@ -50,7 +50,7 @@ Ten tables with foreign key constraints and ON DELETE CASCADE rules throughout.
 ## Project Structure
 
 ```
-Database-project/
+Real-Estate-Listings-App/
 ├── src/
 │   ├── houses.sql           ← full schema (10 tables)
 │   ├── houses-base.sql      ← base seed data
