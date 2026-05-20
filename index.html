@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Estate Database Web App — PHP, MySQL</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #1f6feb;
+    --accent-hover: #388bfd;
+    --green: #3fb950;
+    --orange: #d29922;
+    --purple: #a371f7;
+    --red: #f85149;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+  }
+
+  header h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  header p { font-size: 14px; color: var(--muted); max-width: 720px; line-height: 1.6; margin-top: 6px; }
+
+  header .links {
+    margin-top: 12px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  header .links a {
+    font-size: 13px;
+    color: var(--accent-hover);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+
+  header .links a:hover { background: var(--border); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  /* Demo video */
+  .video-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .video-wrap video {
+    width: 100%;
+    display: block;
+    background: #000;
+    max-height: 560px;
+  }
+
+  .video-caption {
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* Schema diagram */
+  .schema-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .table-card .table-header {
+    background: #1c2128;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .table-card .col-row {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    color: var(--muted);
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .table-card .col-row:last-child { border-bottom: none; }
+
+  .col-name { color: var(--text); }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .pk  { background: rgba(210, 153, 34, 0.15); color: var(--orange); border: 1px solid rgba(210,153,34,0.3); }
+  .fk  { background: rgba(56, 139, 253, 0.12); color: var(--accent-hover); border: 1px solid rgba(56,139,253,0.25); }
+  .uq  { background: rgba(163, 113, 247, 0.12); color: var(--purple); border: 1px solid rgba(163,113,247,0.25); }
+  .nn  { background: rgba(63, 185, 80, 0.10); color: var(--green); border: 1px solid rgba(63,185,80,0.2); }
+
+  /* CRUD cards */
+  .crud-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .crud-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+
+  .crud-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .crud-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .op-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .op-get    { background: rgba(63,185,80,.15);  color: var(--green);         border:1px solid rgba(63,185,80,.3); }
+  .op-post   { background: rgba(56,139,253,.15); color: var(--accent-hover);  border:1px solid rgba(56,139,253,.3); }
+  .op-put    { background: rgba(210,153,34,.15); color: var(--orange);        border:1px solid rgba(210,153,34,.3); }
+  .op-delete { background: rgba(248,81,73,.15);  color: var(--red);           border:1px solid rgba(248,81,73,.3); }
+
+  /* Stack table */
+  .stack-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 48px;
+  }
+
+  .stack-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .stack-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+  }
+
+  .stack-table tr:hover td { background: var(--surface); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 32px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  footer a { color: var(--accent-hover); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="section-label" style="margin-bottom:6px">Web · Database · PHP / MySQL</p>
+  <h1>Real Estate Database Web App</h1>
+  <p>A web application for browsing, listing, and managing real estate properties — paginated house listings with full details, transactional create/update/delete operations, and a ten-table normalised MySQL schema.</p>
+  <div class="links">
+    <a href="https://github.com/Halkhoori2000/Database-project" target="_blank">GitHub →</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Demo video -->
+  <h2>Live Demo</h2>
+  <div class="video-wrap">
+    <video controls preload="metadata">
+      <source src="results/screen-capture.webm" type="video/webm">
+    </video>
+    <div class="video-caption">Screen recording of the live application — browsing the house listing, inserting a new property, updating details, and deleting a record.</div>
+  </div>
+
+  <!-- CRUD operations -->
+  <h2>CRUD Operations</h2>
+  <div class="crud-grid">
+
+    <div class="crud-card">
+      <h3><span class="op-badge op-get">GET</span> List Houses</h3>
+      <p><code>start.php</code> — paginated house listing with multi-table JOIN across House, Address, HouseForSale, and Owner. Fetches <code>rowsPerPage + 1</code> to detect the next page without a COUNT query.</p>
+    </div>
+
+    <div class="crud-card">
+      <h3><span class="op-badge op-post">POST</span> Insert Listing</h3>
+      <p><code>insert.php</code> — wraps House, Address, HouseFeature, and Owner inserts in a single PDO transaction; rolls back all four if any step fails.</p>
+    </div>
+
+    <div class="crud-card">
+      <h3><span class="op-badge op-put">POST</span> Update Listing</h3>
+      <p><code>update.php</code> — updates House and Address rows, then deletes and re-inserts all HouseFeature rows for the house to handle checkbox changes atomically.</p>
+    </div>
+
+    <div class="crud-card">
+      <h3><span class="op-badge op-delete">POST</span> Delete Listing</h3>
+      <p><code>delete.php</code> — deletes a House row; ON DELETE CASCADE propagates to Address, HouseFeature, HouseForSale, Sale, and Owner automatically.</p>
+    </div>
+
+  </div>
+
+  <!-- Schema -->
+  <h2>Database Schema — 10 Tables</h2>
+  <div class="schema-grid">
+
+    <div class="table-card">
+      <div class="table-header">House</div>
+      <div class="col-row"><span class="col-name">HouseId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">HouseBuilt</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">HouseAddress</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">HouseRooms</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">HouseBedrooms</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">HouseBathrooms</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">HouseGarage</span></div>
+      <div class="col-row"><span class="col-name">HouseLotSize</span></div>
+      <div class="col-row"><span class="col-name">HouseArea</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">Address</div>
+      <div class="col-row"><span class="col-name">AddressId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">AddressStreet</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">AddressZipCode</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">AddressCity</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">AddressCountry</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">HouseId</span><span class="badge fk">FK</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">Feature</div>
+      <div class="col-row"><span class="col-name">FeatureId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">FeatureDescription</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">FeatureCategoryId</span><span class="badge fk">FK</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">FeatureCategory</div>
+      <div class="col-row"><span class="col-name">FeatureCategoryId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">FeatureCategory</span><span class="badge uq">UNIQUE</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">HouseFeature</div>
+      <div class="col-row"><span class="col-name">HouseFeatureId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">HouseId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span class="col-name">FeatureId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span style="color:var(--muted);font-size:11px">UNIQUE(HouseId, FeatureId)</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">Person</div>
+      <div class="col-row"><span class="col-name">PersonId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">Username</span><span class="badge uq">UNIQUE</span></div>
+      <div class="col-row"><span class="col-name">Email</span><span class="badge uq">UNIQUE</span></div>
+      <div class="col-row"><span class="col-name">PersonFirstName</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">BirthDate</span><span class="badge nn">NOT NULL</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">Owner</div>
+      <div class="col-row"><span class="col-name">OwnerId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">PersonId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span class="col-name">HouseId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span class="col-name">OwnerName</span><span class="badge uq">UNIQUE</span></div>
+      <div class="col-row"><span class="col-name">OwnerPhone</span><span class="badge nn">NOT NULL</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">Agent</div>
+      <div class="col-row"><span class="col-name">AgentId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">PersonId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span class="col-name">AgentName</span><span class="badge uq">UNIQUE</span></div>
+      <div class="col-row"><span class="col-name">AgentPhone</span><span class="badge nn">NOT NULL</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">HouseForSale</div>
+      <div class="col-row"><span class="col-name">HouseForSaleId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">HouseId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span class="col-name">HousePrice</span><span class="badge nn">NOT NULL</span></div>
+      <div class="col-row"><span class="col-name">DatePosted</span><span class="badge nn">NOT NULL</span></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">Sale</div>
+      <div class="col-row"><span class="col-name">SaleId</span><span class="badge pk">PK</span></div>
+      <div class="col-row"><span class="col-name">HouseForSaleId</span><span class="badge fk">FK</span></div>
+      <div class="col-row"><span class="col-name">SaleDate</span><span class="badge nn">NOT NULL</span></div>
+    </div>
+
+  </div>
+
+  <!-- Tech stack -->
+  <h2>Tech Stack</h2>
+  <table class="stack-table">
+    <thead>
+      <tr><th>Item</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Language</td><td>PHP</td></tr>
+      <tr><td>Database</td><td>MySQL</td></tr>
+      <tr><td>DB Access</td><td>PDO with transactions (beginTransaction / commit / rollBack)</td></tr>
+      <tr><td>Data Generator</td><td>Python (data.py) — parameterised INSERT scripts</td></tr>
+      <tr><td>Frontend</td><td>Plain HTML forms with htmlspecialchars() output escaping</td></tr>
+      <tr><td>Libraries</td><td>None</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<footer>
+  Real Estate Database Web App — PHP / MySQL &nbsp;·&nbsp;
+  <a href="https://github.com/Halkhoori2000/Database-project" target="_blank">GitHub</a>
+</footer>
+
+</body>
+</html>
