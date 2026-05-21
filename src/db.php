@@ -4,8 +4,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Specify database credentials here
-$username = 'root';
-$password = 'root';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASSWORD') ?: '';
 $host = 'localhost';
 $dbname = 'houses';
 $pdo = null;
