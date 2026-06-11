@@ -4,6 +4,8 @@
 
 **[Live Showcase →](https://halkhoori2000.github.io/Real-Estate-Database-Web-App/)**
 
+**[📄 Project Report (DOCX)](docs/report.docx)**
+
 A web application for browsing, listing, and managing real estate properties. Users can view a paginated list of houses with full details — address, rooms, price, owner, and features — and perform create, update, and delete operations through an HTML form interface backed by a MySQL database.
 
 Built from scratch in PHP using PDO. The backend connects to a relational MySQL database with ten normalised tables (House, Address, FeatureCategory, Feature, HouseFeature, Person, Agent, Owner, HouseForSale, Sale) linked through foreign keys with ON DELETE CASCADE rules. Insert and update operations run inside PDO transactions to ensure all related rows (house, address, features, owner) are written atomically or rolled back together. A Python script (`data.py`) generates synthetic test data using parameterised INSERT statements. `htmlspecialchars()` is applied to all rendered output to prevent XSS.
