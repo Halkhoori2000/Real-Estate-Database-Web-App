@@ -69,7 +69,8 @@ Real-Estate-Database-Web-App/
 │   ├── delete.php           ← delete house (cascades via FK)
 │   └── data.py              ← Python test data generator
 └── results/
-    └── demo.mp4             ← edited demo (chapters + fast-forward setup)
+    ├── demo.mp4             ← edited demo (chapters + fast-forward setup)
+    └── screen-capture.webm  ← original raw recording
 ```
 
 ---
