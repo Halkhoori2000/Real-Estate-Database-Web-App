@@ -1,5 +1,7 @@
 # Real Estate Database Web App — PHP, MySQL
 
+*CMPSC 431W · The Pennsylvania State University · 2022*
+
 **[Live Showcase →](https://halkhoori2000.github.io/Real-Estate-Database-Web-App/)**
 
 A web application for browsing, listing, and managing real estate properties. Users can view a paginated list of houses with full details — address, rooms, price, owner, and features — and perform create, update, and delete operations through an HTML form interface backed by a MySQL database.
@@ -89,5 +91,5 @@ php -S localhost:8000 -t src/
 
 ## Course
 
-TBD  
-The Pennsylvania State University
+CMPSC 431W  
+The Pennsylvania State University · 2022
